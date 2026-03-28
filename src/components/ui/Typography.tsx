@@ -1,4 +1,4 @@
-import { ReactNode } from "react";
+import type { ReactNode } from "react";
 import { twMerge } from "tailwind-merge";
 
 // ─── Heading ─────────────────────────────────────────────────────────────────
@@ -27,11 +27,11 @@ interface HeadingProps {
   children: ReactNode;
 }
 
-export function Heading({ size = "xl", as, className = "", children }: HeadingProps) {
+export function Heading({ size = "xl", as, className, children }: HeadingProps) {
   const Tag = as ?? defaultTag[size];
   return (
     <Tag
-      className={twMerge(`text-[--color-text] ${headingStyles[size]}`, className)}
+      className={twMerge("text-[--color-text]", headingStyles[size], className)}
       style={{ fontFamily: "var(--font-display)" }}
     >
       {children}
@@ -42,6 +42,7 @@ export function Heading({ size = "xl", as, className = "", children }: HeadingPr
 // ─── Text ─────────────────────────────────────────────────────────────────────
 
 type TextSize = "sm" | "base" | "lg";
+type TextTag = "p" | "span" | "div" | "li";
 
 const textStyles: Record<TextSize, string> = {
   lg: "text-[1.125rem] leading-[1.7]",
@@ -52,21 +53,23 @@ const textStyles: Record<TextSize, string> = {
 interface TextProps {
   size?: TextSize;
   muted?: boolean;
+  as?: TextTag;
   className?: string;
   children: ReactNode;
 }
 
-export function Text({ size = "base", muted = false, className = "", children }: TextProps) {
+export function Text({ size = "base", muted = false, as: Tag = "p", className, children }: TextProps) {
   return (
-    <p
+    <Tag
       className={twMerge(
-        `${textStyles[size]} ${muted ? "text-[--color-muted]" : "text-[--color-text]"}`,
+        textStyles[size],
+        muted ? "text-[--color-muted]" : "text-[--color-text]",
         className
       )}
       style={{ fontFamily: "var(--font-body)" }}
     >
       {children}
-    </p>
+    </Tag>
   );
 }
 
@@ -77,7 +80,7 @@ interface MonoProps {
   children: ReactNode;
 }
 
-export function Mono({ className = "", children }: MonoProps) {
+export function Mono({ className, children }: MonoProps) {
   return (
     <span
       className={twMerge(
