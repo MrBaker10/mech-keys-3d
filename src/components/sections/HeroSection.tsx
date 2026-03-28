@@ -3,7 +3,6 @@
 import { useRef } from "react";
 import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { Mono } from "@/components/ui/Typography";
 
 const TITLE = "MechKeys";
@@ -72,14 +71,16 @@ export function HeroSection() {
         );
 
       // ─── Scroll-out animation ─────────────────────────────────────────────────
-      gsap.timeline({
+      const scrollOutTl = gsap.timeline({
         scrollTrigger: {
           trigger: sectionRef.current,
           start: "top top",
           end: "bottom top",
           scrub: 1,
         },
-      })
+      });
+
+      scrollOutTl
         // Scroll indicator disappears immediately
         .to(scrollIndicatorRef.current, { opacity: 0, duration: 0.15 }, 0)
         // Subtitle fades out faster
@@ -91,7 +92,8 @@ export function HeroSection() {
 
       return () => {
         pulseTween?.kill();
-        ScrollTrigger.getAll().forEach((st) => st.kill());
+        scrollOutTl.scrollTrigger?.kill();
+        scrollOutTl.kill();
       };
     },
     { scope: sectionRef }
