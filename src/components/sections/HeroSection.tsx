@@ -3,6 +3,7 @@
 import { useRef } from "react";
 import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { Mono } from "@/components/ui/Typography";
 
 const TITLE = "MechKeys";
@@ -10,6 +11,7 @@ const letters = TITLE.split("");
 
 export function HeroSection() {
   const sectionRef = useRef<HTMLElement>(null);
+  const headlineRef = useRef<HTMLHeadingElement>(null);
   const letterRefs = useRef<(HTMLSpanElement | null)[]>([]);
   const subtitleRef = useRef<HTMLParagraphElement>(null);
   const scrollIndicatorRef = useRef<HTMLDivElement>(null);
@@ -17,19 +19,27 @@ export function HeroSection() {
 
   useGSAP(
     () => {
-      // Respect prefers-reduced-motion
-      if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+      // Respect prefers-reduced-motion — set final visible state, skip animations
+      if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+        gsap.set(
+          [letterRefs.current.filter(Boolean), subtitleRef.current, scrollIndicatorRef.current],
+          { opacity: 1, y: 0 }
+        );
+        return;
+      }
 
       let pulseTween: gsap.core.Tween | undefined;
 
-      const tl = gsap.timeline({ defaults: { ease: "power3.out" } });
+      // ─── Load animation ──────────────────────────────────────────────────────
+      const loadTl = gsap.timeline({ defaults: { ease: "power3.out" } });
 
-      // 1. Letter stagger
-      tl.fromTo(
-        letterRefs.current.filter(Boolean),
-        { opacity: 0, y: 30 },
-        { opacity: 1, y: 0, duration: 0.6, stagger: 0.04 }
-      )
+      loadTl
+        // 1. Letter stagger
+        .fromTo(
+          letterRefs.current.filter(Boolean),
+          { opacity: 0, y: 30 },
+          { opacity: 1, y: 0, duration: 0.6, stagger: 0.04 }
+        )
         // 2. Subtitle
         .fromTo(
           subtitleRef.current,
@@ -44,7 +54,7 @@ export function HeroSection() {
           { opacity: 1, duration: 0.5 },
           "-=0.2"
         )
-        // 4. Pulse loop starts 0.3s after timeline ends
+        // 4. Pulse loop starts 0.3s after load animation ends
         .call(
           () => {
             pulseTween = gsap.to(lineRef.current, {
@@ -61,7 +71,28 @@ export function HeroSection() {
           "+=0.3"
         );
 
-      return () => pulseTween?.kill();
+      // ─── Scroll-out animation ─────────────────────────────────────────────────
+      gsap.timeline({
+        scrollTrigger: {
+          trigger: sectionRef.current,
+          start: "top top",
+          end: "bottom top",
+          scrub: 1,
+        },
+      })
+        // Scroll indicator disappears immediately
+        .to(scrollIndicatorRef.current, { opacity: 0, duration: 0.15 }, 0)
+        // Subtitle fades out faster
+        .to(subtitleRef.current, { opacity: 0, duration: 0.4 }, 0)
+        // Title moves up and fades
+        .to(headlineRef.current, { y: -80, opacity: 0.2, duration: 1 }, 0)
+        // Section scales down subtly
+        .to(sectionRef.current, { scale: 0.95, transformOrigin: "center top", duration: 1 }, 0);
+
+      return () => {
+        pulseTween?.kill();
+        ScrollTrigger.getAll().forEach((st) => st.kill());
+      };
     },
     { scope: sectionRef }
   );
@@ -75,6 +106,7 @@ export function HeroSection() {
       <div className="flex flex-col items-center gap-6 px-6 text-center">
         {/* Title with letter-stagger */}
         <h1
+          ref={headlineRef}
           className="font-bold leading-none tracking-[-0.05em] text-[--color-text] text-[clamp(4rem,12vw,10rem)]"
           style={{ fontFamily: "var(--font-display)" }}
         >
