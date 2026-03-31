@@ -55,6 +55,7 @@ export function SpecsSection() {
           y: 0,
           duration: 0.5,
           ease: "power2.out",
+          immediateRender: false,
           scrollTrigger: {
             trigger: sectionRef.current,
             start: "top 90%",
@@ -73,6 +74,7 @@ export function SpecsSection() {
           stagger: 0.07,
           duration: 0.65,
           ease: "power3.out",
+          immediateRender: false,
           scrollTrigger: {
             trigger: sectionRef.current,
             start: "top 80%",
