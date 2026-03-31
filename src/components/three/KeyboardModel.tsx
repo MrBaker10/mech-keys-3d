@@ -39,9 +39,12 @@ export function KeyboardModel({ progressRef }: KeyboardModelProps) {
     groupRef.current.position.z = -p * 2;
   });
 
+  if (!nodes.defaultMaterial || !nodes.defaultMaterial_2 || !materials.Keyboard) return null;
+
   return (
-    <>
-      {/* Rim light in world space — fixed neon-lime edge on keyboard */}
+    <group ref={groupRef}>
+      {/* Rim light travels with the keyboard — dynamic highlight as model rotates;
+          also ensures the light is hidden if this group is visibility-gated */}
       <spotLight
         position={[-4, 3, -2]}
         intensity={8}
@@ -50,7 +53,6 @@ export function KeyboardModel({ progressRef }: KeyboardModelProps) {
         penumbra={0.8}
         distance={15}
       />
-      <group ref={groupRef}>
         {/* Scale-normalised model — ~4 world units wide; tune if needed */}
         <group scale={0.01}>
           <Center>
@@ -77,8 +79,7 @@ export function KeyboardModel({ progressRef }: KeyboardModelProps) {
             </group>
           </Center>
         </group>
-      </group>
-    </>
+    </group>
   );
 }
 
