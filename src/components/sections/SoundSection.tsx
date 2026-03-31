@@ -146,7 +146,7 @@ export function SoundSection() {
       className="relative z-[2] h-[200vh] bg-[--color-bg]"
     >
       {/* ── Pinned 100vh viewport ────────────────────────────────────────── */}
-      <div ref={innerRef} className="relative flex h-screen w-full flex-col items-center justify-center gap-14 px-[8vw]">
+      <div ref={innerRef} className="relative flex h-screen w-full flex-col items-center justify-center gap-14 px-[8vw] opacity-0">
 
         {/* Waveform canvas */}
         <div className="w-full max-w-4xl" style={{ height: "180px" }}>

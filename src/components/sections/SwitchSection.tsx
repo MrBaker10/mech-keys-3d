@@ -140,7 +140,7 @@ export function SwitchSection() {
       className="relative z-[2] h-[250vh] bg-[--color-bg]"
     >
       {/* ── Pinned 100vh viewport ──────────────────────────────────────────── */}
-      <div ref={gridRef} className="relative grid h-screen w-full grid-cols-1 md:grid-cols-[1fr_1fr]">
+      <div ref={gridRef} className="relative grid h-screen w-full grid-cols-1 md:grid-cols-[1fr_1fr] opacity-0">
 
         {/* ── Left — 3D placeholder (hidden on mobile) ─────────────────────── */}
         <div ref={leftPanelRef} className="relative hidden items-center justify-center border-r border-[--color-border] md:flex">
