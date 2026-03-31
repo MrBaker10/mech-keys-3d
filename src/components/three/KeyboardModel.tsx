@@ -13,7 +13,6 @@ interface KeyboardGLTF {
   };
   materials: {
     Keyboard: MeshStandardMaterial;
-    Wood_00: MeshStandardMaterial;
   };
 }
 
@@ -41,8 +40,8 @@ export function KeyboardModel({ progressRef }: KeyboardModelProps) {
   });
 
   return (
-    <group ref={groupRef}>
-      {/* Rim light in unscaled space — neon-lime edge on left shoulder */}
+    <>
+      {/* Rim light in world space — fixed neon-lime edge on keyboard */}
       <spotLight
         position={[-4, 3, -2]}
         intensity={8}
@@ -51,34 +50,35 @@ export function KeyboardModel({ progressRef }: KeyboardModelProps) {
         penumbra={0.8}
         distance={15}
       />
-
-      {/* Scale-normalised model — ~4 world units wide; tune if needed */}
-      <group scale={0.01}>
-        <Center>
-          <group rotation={[-Math.PI / 2, 0, 0]}>
-            <group rotation={[Math.PI / 2, 0, 0]}>
-              {/* Keyboard body */}
-              <mesh
-                geometry={nodes.defaultMaterial.geometry}
-                material={materials.Keyboard}
-                position={[0, -23.907, 0]}
-                rotation={[-Math.PI / 2, 0, 0]}
-                scale={100}
-              />
-              {/* defaultMaterial_1 (Wood_00 desk surface) intentionally omitted */}
-              {/* Keyboard detail mesh */}
-              <mesh
-                geometry={nodes.defaultMaterial_2.geometry}
-                material={materials.Keyboard}
-                position={[-21.666, 173.137, -75.702]}
-                rotation={[-1.476, 0, 0]}
-                scale={5.744}
-              />
+      <group ref={groupRef}>
+        {/* Scale-normalised model — ~4 world units wide; tune if needed */}
+        <group scale={0.01}>
+          <Center>
+            <group rotation={[-Math.PI / 2, 0, 0]}>
+              <group rotation={[Math.PI / 2, 0, 0]}>
+                {/* Keyboard body */}
+                <mesh
+                  geometry={nodes.defaultMaterial.geometry}
+                  material={materials.Keyboard}
+                  position={[0, -23.907, 0]}
+                  rotation={[-Math.PI / 2, 0, 0]}
+                  scale={100}
+                />
+                {/* defaultMaterial_1 (Wood_00 desk surface) intentionally omitted */}
+                {/* Keyboard detail mesh */}
+                <mesh
+                  geometry={nodes.defaultMaterial_2.geometry}
+                  material={materials.Keyboard}
+                  position={[-21.666, 173.137, -75.702]}
+                  rotation={[-1.476, 0, 0]}
+                  scale={5.744}
+                />
+              </group>
             </group>
-          </group>
-        </Center>
+          </Center>
+        </group>
       </group>
-    </group>
+    </>
   );
 }
 
